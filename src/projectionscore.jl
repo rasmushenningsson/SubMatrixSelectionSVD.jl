@@ -1,10 +1,10 @@
 function α{S<:Integer,T<:Real}(s::Union{AbstractVector{S},S},K::Symmetric{T})
     N = size(K,2)
-    s = min(s,N) # any value s>N will get an α score of 1
+    s = broadcast(min,s,N) # any value s>N will get an α score of 1
     eig = reverse(eigvals(K, N-maximum(s)+1:N)) # get the largest eigenvalues (as many as we need) and sort them in decreasing order
     num = cumsum(eig)[s] # ∑ᵢ₌₁ˢ λᵢ² ∀s
     denom = trace(K) # ∑_ᵢ₌₁ⁿ λᵢ²
-    sqrt(num/denom)
+    broadcast(sqrt,num/denom)
 end
 α{S<:Integer}(s::Union{AbstractVector{S},S}, X::AbstractMatrix) = α(s,Symmetric(X'*X))
 
