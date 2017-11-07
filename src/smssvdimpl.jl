@@ -6,25 +6,44 @@ else
     _svds(args...; kwargs...) = (A=svds(args...; kwargs...); (A[1][:U],A[1][:S],A[1][:V]))
 end
 
+"""
+    smssvd(X, d, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int)) -> (U,Σ,V,ps,signalDimensions,selectedVariables)
 
-function smssvd(X, n, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int))
+Computes the SubMatrix Selection Singular Value Decomposition (SMSSVD) of a matrix X.
+
+**Inputs**
+
+* `X`: PxN data matrix (P variables and N samples).
+* `d`: Number of dimension in the result.
+* `stdThresholds`: Standard deviation filtering thresholds at which the Projection Score will be evaluated. Expressed as fractions of the maximum standard deviation of a variable in X. Should be a vector of increasing values between 0 and 1.
+
+**Outputs**
+
+* `U`: Pxd matrix of left singular vectors (variable representation).
+* `S`: d-vector of singular values.
+* `V`: Nxd matrix of right singular vectors (sample representation).
+* `ps`: d x length(stdThresholds) matrix with all Projection Scores. Useful for plotting.
+* `signalDimensions`: Vector with the number of dimensions in each signal detected by SMSSVD.
+* `selectedVariables`: For each signal, a bitmask showing the variables selected by Projection Score.
+"""
+function smssvd(X, d, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int))
     σMax = maximum(std(X,2)) # Always base the variable filtering on the original σ's 
 
-    U = zeros(size(X,1),n)
-    Σ = zeros(n)
-    V = zeros(size(X,2),n)
+    U = zeros(size(X,1),d)
+    Σ = zeros(d)
+    V = zeros(size(X,2),d)
 
-    ps = zeros(n, length(stdThresholds))
+    ps = zeros(d, length(stdThresholds))
 
     signalDimensions = Int[]
     selectedVariables = Vector{BitArray}()
 
     k = 1
-    while k<=n
+    while k<=d
         # Filter variables and choose dimension by optimizing over Projection Score
         σ = squeeze(std(X,2),2) / σMax # always keep the same scale
 
-        dmax = min(n-k+1, maxSignalDim)
+        dmax = min(d-k+1, maxSignalDim)
         PS = projectionscorefiltered(X, 1:dmax, stdThresholds, nbrIter=nbrIter, σ=σ)
         dims,σInd = ind2sub(size(PS), indmax(PS)) # Use projection score both to choose dimension and threshold for this signal
         σThresh = stdThresholds[σInd]
