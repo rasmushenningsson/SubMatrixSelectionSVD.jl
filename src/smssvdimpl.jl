@@ -1,4 +1,12 @@
 
+# Julia version compatibility
+if VERSION<v"0.5"
+    _svds(args...; kwargs...) = svds(args...; kwargs...)
+else
+    _svds(args...; kwargs...) = (A=svds(args...; kwargs...); (A[1][:U],A[1][:S],A[1][:V]))
+end
+
+
 function smssvd(X, n, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int))
     σMax = maximum(std(X,2)) # Always base the variable filtering on the original σ's 
 
@@ -34,7 +42,7 @@ function smssvd(X, n, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim
         _,Π = eig(K, M-dims+1:M) # only get the largest eigenvalues and vectors
 
         # Project X onto the subspace v and compute SVD. For dims=1, this is identical to uσ:=Xv.
-        UΠ,ΣΠ,VΠ = svds(X*Π,nsv=dims) # solve for smaller matrix expressed in the basis of the subspace Π
+        UΠ,ΣΠ,VΠ = _svds(X*Π,nsv=dims) # solve for smaller matrix expressed in the basis of the subspace Π
         U[:,r] = UΠ
         Σ[r]   = ΣΠ
         V[:,r] = Π*VΠ # expand to original basis
