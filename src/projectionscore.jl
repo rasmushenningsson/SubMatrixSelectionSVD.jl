@@ -28,7 +28,7 @@ function projectionscore{S<:Integer}(X::AbstractMatrix, s::Union{AbstractVector{
         nbrIterPerWorker = [ ((d,r)=divrem(nbrIter,nbrWorkers); d+(r>=i)) for i=1:nbrWorkers ] # divide iterations evenly among workers
 
         # TODO: do with pmap instead?
-        refs = Array{RemoteRef}(nbrWorkers)
+        refs = Array{Any}(nbrWorkers)
         for i=1:nbrWorkers
             refs[i] = @spawnat W[i] _αbootstrap(X,s,nbrIterPerWorker[i])
         end
@@ -106,7 +106,7 @@ function projectionscorefiltered{S<:Integer}(X::AbstractMatrix, s::Union{Abstrac
         nbrWorkers = min( length(W), nbrIter ) # never use more than nbrIter workers
         nbrIterPerWorker = [ ((d,r)=divrem(nbrIter,nbrWorkers); d+(r>=i)) for i=1:nbrWorkers ] # divide iterations evenly among workers
 
-        refs = Array{RemoteRef}(nbrWorkers)
+        refs = Array{Any}(nbrWorkers)
         for i=1:nbrWorkers
             refs[i] = @spawnat W[i] _αfilteredsum(X,s,σ,σThresholds,nbrIterPerWorker[i])
         end
