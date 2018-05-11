@@ -75,6 +75,8 @@ function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, max
     U,Σ,V,ps,signalDimensions,selectedVariables
 end
 
-function smssvd(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int)) where T<:Integer
-    smssvd(X, d[1], stdThresholds, nbrIter = nbrIter, maxSignalDim = maxSignalDim)
+# convenience method useful when calling smssvd from R
+function smssvd(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); kwargs...) where T<:Integer
+    @assert length(d)==1
+    smssvd(X, d[1], stdThresholds; kwargs...)
 end
