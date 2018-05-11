@@ -1,4 +1,12 @@
-# SMSSVD.jl
+# SMSSVD
+
+[![Build Status](https://travis-ci.org/rasmushenningsson/SMSSVD.jl.svg?branch=master)](https://travis-ci.org/rasmushenningsson/SMSSVD.jl)
+
+[![Coverage Status](https://coveralls.io/repos/rasmushenningsson/SMSSVD.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/rasmushenningsson/SMSSVD.jl?branch=master)
+
+[![codecov.io](http://codecov.io/github/rasmushenningsson/SMSSVD.jl/coverage.svg?branch=master)](http://codecov.io/github/rasmushenningsson/SMSSVD.jl?branch=master)
+
+
 [SubMatrix Selection Singular Value Decomposition](http://arxiv.org/abs/1710.08144).
 
 ## Installation
