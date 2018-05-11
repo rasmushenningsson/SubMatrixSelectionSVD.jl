@@ -26,8 +26,8 @@ Computes the SubMatrix Selection Singular Value Decomposition (SMSSVD) of a matr
 * `signalDimensions`: Vector with the number of dimensions in each signal detected by SMSSVD.
 * `selectedVariables`: For each signal, a bitmask showing the variables selected by Projection Score.
 """
-function smssvd(X, d, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int))
-    σMax = maximum(std(X,2)) # Always base the variable filtering on the original σ's 
+function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int))
+    σMax = maximum(std(X,2)) # Always base the variable filtering on the original σ's
 
     U = zeros(size(X,1),d)
     Σ = zeros(d)
@@ -73,4 +73,8 @@ function smssvd(X, d, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim
     end
 
     U,Σ,V,ps,signalDimensions,selectedVariables
+end
+
+function smssvd(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int)) where T<:Integer
+    smssvd(X, d[1], stdThresholds, nbrIter = nbrIter, maxSignalDim = maxSignalDim)
 end
