@@ -15,5 +15,6 @@ end
 	@test size(V)==(7,4)
 	@test size(ps)==(4,5)
 	@test length(signalDimensions)<=4
+	@test sum(signalDimensions)==4
 	@test all(x->size(x)==(10,), selectedVariables)
 end
