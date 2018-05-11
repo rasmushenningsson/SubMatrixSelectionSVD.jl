@@ -9,4 +9,5 @@ function _precompile_()
     precompile(Tuple{getfield(SMSSVD, Symbol("##_svds#18")), Array{Any, 1}, typeof(identity), Array{Float64, 2}, Array{Float64, 2}})
     precompile(Tuple{typeof(SMSSVD.smssvd), Array{Float64, 2}, Int64, Array{Float64, 1}})
     precompile(Tuple{typeof(SMSSVD.smssvd), Array{Float64, 2}, Int64})
+    precompile(Tuple{typeof(SMSSVD.smssvd), Array{Float64, 2}, Array{Int64, 1}})
 end
