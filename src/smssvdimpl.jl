@@ -1,11 +1,3 @@
-
-# Julia version compatibility
-if VERSION<v"0.5"
-    _svds(args...; kwargs...) = svds(args...; kwargs...)
-else
-    _svds(args...; kwargs...) = (A=svds(args...; kwargs...); (A[1][:U],A[1][:S],A[1][:V]))
-end
-
 """
     smssvd(X, d, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int)) -> (U,Σ,V,ps,signalDimensions,selectedVariables)
 
@@ -61,7 +53,9 @@ function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, max
         _,Π = eig(K, M-dims+1:M) # only get the largest eigenvalues and vectors
 
         # Project X onto the subspace v and compute SVD. For dims=1, this is identical to uσ:=Xv.
-        UΠ,ΣΠ,VΠ = _svds(X*Π,nsv=dims) # solve for smaller matrix expressed in the basis of the subspace Π
+        F = svds(X*Π,nsv=dims) # solve for smaller matrix expressed in the basis of the subspace Π
+        UΠ,ΣΠ,VΠ = F[1][:U],F[1][:S],F[1][:V]
+
         U[:,r] = UΠ
         Σ[r]   = ΣΠ
         V[:,r] = Π*VΠ # expand to original basis
@@ -76,8 +70,7 @@ function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, max
 end
 
 # convenience method useful when calling smssvd from R
-# function smssvd(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); kwargs...) where T<:Integer
-function smssvd{T<:Integer}(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); kwargs...)
+function smssvd(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); kwargs...) where T<:Integer
     @assert length(d)==1
     smssvd(X, d[1], stdThresholds; kwargs...)
 end

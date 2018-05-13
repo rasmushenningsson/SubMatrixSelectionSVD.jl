@@ -1,13 +1,12 @@
 using SMSSVD
-# @static if VERSION < v"0.7.0-DEV.2005"
-if VERSION < v"0.7.0-DEV.2005"
+@static if VERSION < v"0.7.0-DEV.2005"
     using Base.Test
 else
     using Test
 end
 
 
-#@testset "Basic Tests" begin
+@testset "Basic Tests" begin
 	X = randn(10,7)
 	U,Σ,V,ps,signalDimensions,selectedVariables = smssvd(X,4,logspace(-2,0,5),nbrIter=2)
 
@@ -18,4 +17,4 @@ end
 	@test length(signalDimensions)<=4
 	@test sum(signalDimensions)==4
 	@test all(x->size(x)==(10,), selectedVariables)
-#end
+end
