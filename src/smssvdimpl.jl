@@ -76,7 +76,8 @@ function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, max
 end
 
 # convenience method useful when calling smssvd from R
-function smssvd(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); kwargs...) where T<:Integer
+# function smssvd(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); kwargs...) where T<:Integer
+function smssvd{T<:Integer}(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); kwargs...)
     @assert length(d)==1
     smssvd(X, d[1], stdThresholds; kwargs...)
 end

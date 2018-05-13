@@ -11,6 +11,6 @@ export
 include("projectionscore.jl")
 include("smssvdimpl.jl")
 include("precompile.jl")
-_precompile_()
+VERSION>=v"0.6" && _precompile_()
 
 end
