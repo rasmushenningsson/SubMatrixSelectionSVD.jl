@@ -1,4 +1,4 @@
-The SMSSVD.jl package is licensed under the MIT "Expat" License:
+The SubMatrixSelectionSVD.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2017-2018: Rasmus Henningsson.
 >
