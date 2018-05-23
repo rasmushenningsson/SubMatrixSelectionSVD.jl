@@ -9,7 +9,7 @@
 
 ## Installation
 ```julia
-Pkg.clone("https://github.com/rasmushenningsson/SubMatrixSelectionSVD.jl.git")
+Pkg.add("SubMatrixSelectionSVD")
 ```
 
 ## Example
