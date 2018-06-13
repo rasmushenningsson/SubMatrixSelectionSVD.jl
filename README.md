@@ -46,5 +46,5 @@ U,Σ,V,ps,signalDimensions = smssvd(X, d, σThresholds)
 # Projection Score Plot
 df = DataFrame(Sigma=repmat(σThresholds',d,1)[:], ProjectionScore=ps[:], NbrDims=repmat(1:d,1,length(σThresholds))[:])
 coords = Coord.cartesian(xmin=log10(σThresholds[1]), xmax=log10(σThresholds[end]), ymin=0)
-plot(df,x=:Sigma,y=:ProjectionScore,color=:NbrDims,Geom.line,coords,Scale.x_log10,Guide.xlabel("σ Threshold"),Guide.ylabel("Projection Score"),Guide.colorkey("Dimension"),Guide.title("Projection Score"))
+plot(df,x=:Sigma,y=:ProjectionScore,color=:NbrDims,Geom.line,coords,Scale.x_log10,Guide.xlabel("σ Threshold"),Guide.ylabel("Projection Score"),Guide.colorkey(title="Dimension"),Guide.title("Projection Score"))
 ```
