@@ -1,5 +1,5 @@
 """
-    smssvd(X, d, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int)) -> (U,Σ,V,ps,signalDimensions,selectedVariables)
+    smssvd(X, d, stdThresholds=10 .^ range(-2,stop=0,length=100); nbrIter=10, maxSignalDim=typemax(Int)) -> (U,Σ,V,ps,signalDimensions,selectedVariables)
 
 Computes the SubMatrix Selection Singular Value Decomposition (SMSSVD) of a matrix X.
 
@@ -18,8 +18,8 @@ Computes the SubMatrix Selection Singular Value Decomposition (SMSSVD) of a matr
 * `signalDimensions`: Vector with the number of dimensions in each signal detected by SMSSVD.
 * `selectedVariables`: For each signal, a bitmask showing the variables selected by Projection Score.
 """
-function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, maxSignalDim=typemax(Int))
-    σMax = maximum(std(X,2)) # Always base the variable filtering on the original σ's
+function smssvd(X, d::Integer, stdThresholds=10 .^ range(-2,stop=0,length=100); nbrIter=10, maxSignalDim=typemax(Int))
+    σMax = maximum(std(X,dims=2)) # Always base the variable filtering on the original σ's
 
     U = zeros(size(X,1),d)
     Σ = zeros(d)
@@ -33,11 +33,11 @@ function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, max
     k = 1
     while k<=d
         # Filter variables and choose dimension by optimizing over Projection Score
-        σ = squeeze(std(X,2),2) / σMax # always keep the same scale
+        σ = dropdims(std(X,dims=2),dims=2) / σMax # always keep the same scale
 
         dmax = min(d-k+1, maxSignalDim)
         PS = projectionscorefiltered(X, 1:dmax, stdThresholds, nbrIter=nbrIter, σ=σ)
-        dims,σInd = ind2sub(size(PS), indmax(PS)) # Use projection score both to choose dimension and threshold for this signal
+        dims,σInd = Tuple(CartesianIndices(size(PS))[argmax(PS)]) # Use projection score both to choose dimension and threshold for this signal
         σThresh = stdThresholds[σInd]
 
         r = k:k+dims-1
@@ -50,11 +50,11 @@ function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, max
         # Find the subspace Π that we are interested in.
         K = Symmetric(Y'Y)
         M = size(K,1)
-        _,Π = eig(K, M-dims+1:M) # only get the largest eigenvalues and vectors
+        _,Π = eigen(K, M-dims+1:M) # only get the largest eigenvalues and vectors
 
         # Project X onto the subspace v and compute SVD. For dims=1, this is identical to uσ:=Xv.
-        F = svds(X*Π,nsv=dims) # solve for smaller matrix expressed in the basis of the subspace Π
-        UΠ,ΣΠ,VΠ = F[1][:U],F[1][:S],F[1][:V]
+        F = svd(X*Π) # solve for smaller matrix expressed in the basis of the subspace Π
+        UΠ,ΣΠ,VΠ = F.U,F.S,F.V
 
         U[:,r] = UΠ
         Σ[r]   = ΣΠ
@@ -70,7 +70,7 @@ function smssvd(X, d::Integer, stdThresholds=logspace(-2,0,100); nbrIter=10, max
 end
 
 # convenience method useful when calling smssvd from R
-function smssvd(X, d::Vector{T}, stdThresholds=logspace(-2,0,100); kwargs...) where T<:Integer
+function smssvd(X, d::Vector{T}, stdThresholds=10 .^ range(-2,stop=0,length=100); kwargs...) where T<:Integer
     @assert length(d)==1
     smssvd(X, d[1], stdThresholds; kwargs...)
 end

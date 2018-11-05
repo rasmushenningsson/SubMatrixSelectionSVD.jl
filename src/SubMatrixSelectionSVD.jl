@@ -1,7 +1,10 @@
-__precompile__()
+# __precompile__()
 
 module SubMatrixSelectionSVD
 
+using LinearAlgebra
+using Statistics
+using Distributed
 
 export
     smssvd,
@@ -11,6 +14,6 @@ export
 include("projectionscore.jl")
 include("smssvdimpl.jl")
 include("precompile.jl")
-_precompile_()
+# _precompile_()
 
 end

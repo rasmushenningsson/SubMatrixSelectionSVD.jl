@@ -1,23 +1,23 @@
-function α{S<:Integer,T<:Real}(s::Union{AbstractVector{S},S},K::Symmetric{T})
+function α(s::Union{AbstractVector{S},S},K::Symmetric{T}) where {S<:Integer,T<:Real}
     N = size(K,2)
     s = broadcast(min,s,N) # any value s>N will get an α score of 1
     eig = reverse(eigvals(K, N-maximum(s)+1:N)) # get the largest eigenvalues (as many as we need) and sort them in decreasing order
     num = cumsum(eig)[s] # ∑ᵢ₌₁ˢ λᵢ² ∀s
-    denom = trace(K) # ∑_ᵢ₌₁ⁿ λᵢ²
+    denom = tr(K) # ∑_ᵢ₌₁ⁿ λᵢ²
     broadcast(sqrt,num/denom)
 end
-α{S<:Integer}(s::Union{AbstractVector{S},S}, X::AbstractMatrix) = α(s,Symmetric(X'*X))
+α(s::Union{AbstractVector{S},S}, X::AbstractMatrix) where {S<:Integer} = α(s,Symmetric(X'*X))
 
 
 _resamplerow(x) = rand(x,size(x))
-_resamplematrix(X) = mapslices(_resamplerow, X, 2)
+_resamplematrix(X) = mapslices(_resamplerow, X, dims=2)
 
-function _αbootstrap{S<:Integer}(X::AbstractMatrix, s::Union{AbstractVector{S},S}, nbrIter::Integer)
+function _αbootstrap(X::AbstractMatrix, s::Union{AbstractVector{S},S}, nbrIter::Integer) where {S<:Integer}
     sum(i->α(s,_resamplematrix(X)), 1:nbrIter) # bootstrap and sum
 end
 
 
-function projectionscore{S<:Integer}(X::AbstractMatrix, s::Union{AbstractVector{S},S}; nbrIter::Integer=10)
+function projectionscore(X::AbstractMatrix, s::Union{AbstractVector{S},S}; nbrIter::Integer=10) where {S<:Integer}
     αB = NaN
     if nprocs()==1 || nbrIter==1
         αB=_αbootstrap(X,s,nbrIter)/nbrIter # no threading needed
@@ -72,10 +72,10 @@ function _αfilteredsum(X,s,σ,σThresholds,nbrIter)
 end
 
 
-_stdnormalized(X) = (σ=squeeze(std(X,2),2); σ/maximum(σ))
+_stdnormalized(X) = (σ=squeeze(std(X,dims=2),2); σ/maximum(σ))
 
-function projectionscorefiltered{S<:Integer}(X::AbstractMatrix, s::Union{AbstractVector{S},S}, σThresholds::AbstractVector; 
-                                             nbrIter::Integer=10, σ=_stdnormalized(X))
+function projectionscorefiltered(X::AbstractMatrix, s::Union{AbstractVector{S},S}, σThresholds::AbstractVector; 
+                                             nbrIter::Integer=10, σ=_stdnormalized(X)) where {S<:Integer}
     @assert all(diff(σThresholds).>=0) "σThresholds must be increasing"
     @assert length(σ) == size(X,1)
 
