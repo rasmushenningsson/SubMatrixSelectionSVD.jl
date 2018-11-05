@@ -9,6 +9,7 @@
 
 ## Installation
 ```julia
+using Pkg
 Pkg.add("SubMatrixSelectionSVD")
 ```
 
