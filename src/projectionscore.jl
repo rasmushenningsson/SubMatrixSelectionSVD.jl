@@ -72,7 +72,7 @@ function _αfilteredsum(X,s,σ,σThresholds,nbrIter)
 end
 
 
-_stdnormalized(X) = (σ=squeeze(std(X,dims=2),2); σ/maximum(σ))
+_stdnormalized(X) = (σ=dropdims(std(X,dims=2); dims=2); σ/maximum(σ))
 
 function projectionscorefiltered(X::AbstractMatrix, s::Union{AbstractVector{S},S}, σThresholds::AbstractVector; 
                                              nbrIter::Integer=10, σ=_stdnormalized(X)) where {S<:Integer}
@@ -85,7 +85,7 @@ function projectionscorefiltered(X::AbstractMatrix, s::Union{AbstractVector{S},S
     σ = σ[baseFilter]
 
     if length(σ)==0
-        warn("No variables remain after filtering at lowest given threshold.")
+        @warn "No variables remain after filtering at lowest given threshold."
         return zeros(length(s), length(σThresholds))
     end
 
@@ -106,7 +106,7 @@ function projectionscorefiltered(X::AbstractMatrix, s::Union{AbstractVector{S},S
         nbrWorkers = min( length(W), nbrIter ) # never use more than nbrIter workers
         nbrIterPerWorker = [ ((d,r)=divrem(nbrIter,nbrWorkers); d+(r>=i)) for i=1:nbrWorkers ] # divide iterations evenly among workers
 
-        refs = Array{Any}(nbrWorkers)
+        refs = Array{Any}(undef,nbrWorkers)
         for i=1:nbrWorkers
             refs[i] = @spawnat W[i] _αfilteredsum(X,s,σ,σThresholds,nbrIterPerWorker[i])
         end
