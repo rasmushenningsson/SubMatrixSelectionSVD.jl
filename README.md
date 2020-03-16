@@ -1,6 +1,7 @@
 # SubMatrixSelectionSVD
 
-[![Build Status](https://travis-ci.org/rasmushenningsson/SubMatrixSelectionSVD.jl.svg?branch=master)](https://travis-ci.org/rasmushenningsson/SubMatrixSelectionSVD.jl)
+[![Build Status](https://travis-ci.com/rasmushenningsson/SubMatrixSelectionSVD.jl.svg?branch=master)](https://travis-ci.org/rasmushenningsson/SubMatrixSelectionSVD.jl)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/rasmushenningsson/SubMatrixSelectionSVD.jl?svg=true)](https://ci.appveyor.com/project/rasmushenningsson/SubMatrixSelectionSVD-jl)
 [![Coverage Status](https://coveralls.io/repos/rasmushenningsson/SubMatrixSelectionSVD.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/rasmushenningsson/SubMatrixSelectionSVD.jl?branch=master)
 [![codecov.io](http://codecov.io/github/rasmushenningsson/SubMatrixSelectionSVD.jl/coverage.svg?branch=master)](http://codecov.io/github/rasmushenningsson/SubMatrixSelectionSVD.jl?branch=master)
 
